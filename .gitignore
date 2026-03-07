@@ -1,0 +1,24 @@
+# --- Archivos sensibles (NUNCA subir) ---
+**/firebase-adminsdk*.json
+**/.env
+**/.env.*
+**/local.properties
+
+# --- Backend Python ---
+**/__pycache__/
+**/*.pyc
+**/venv/
+**/fitness_app.db
+**/*.db
+
+# --- Android ---
+**/build/
+**/.gradle/
+**/*.iml
+**/.idea/
+!android/.idea/.gitignore
+
+# --- Sistema ---
+.DS_Store
+Thumbs.db
+*.log

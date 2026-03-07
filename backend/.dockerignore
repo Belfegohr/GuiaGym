@@ -1,0 +1,15 @@
+__pycache__
+*.pyc
+*.pyo
+.git
+.gitignore
+venv
+.env
+.env.*
+*.db
+firebase-adminsdk*.json
+README.md
+scripts/
+.pytest_cache
+.coverage
+htmlcov
