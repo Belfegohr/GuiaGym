@@ -10,7 +10,6 @@ bp = Blueprint("usuarios", __name__, url_prefix="/usuarios")
 @bp.route("/mi_perfil", methods=["GET"])
 @requerir_autenticacion
 def obtener_mi_perfil():
-    """Ver mi perfil."""
     usuario = Usuario.query.get(request.usuario_actual_id)
     if not usuario:
         return jsonify({"error": "Usuario no encontrado"}), 404
@@ -20,7 +19,6 @@ def obtener_mi_perfil():
 @bp.route("/mi_perfil", methods=["PUT"])
 @requerir_autenticacion
 def actualizar_mi_perfil():
-    """Actualizar mi perfil."""
     usuario = Usuario.query.get(request.usuario_actual_id)
     if not usuario:
         return jsonify({"error": "Usuario no encontrado"}), 404
@@ -53,7 +51,6 @@ def actualizar_mi_perfil():
 @bp.route("/<int:id_usuario>", methods=["GET"])
 @requerir_autenticacion
 def obtener_perfil_publico(id_usuario):
-    """Ver perfil público de otro usuario (para seguir)."""
     usuario = Usuario.query.get(id_usuario)
     if not usuario:
         return jsonify({"error": "Usuario no encontrado"}), 404

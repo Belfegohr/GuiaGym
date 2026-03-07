@@ -10,7 +10,6 @@ bp = Blueprint("rutinas", __name__, url_prefix="/rutinas")
 @bp.route("", methods=["GET"])
 @requerir_autenticacion
 def listar_rutinas():
-    """Mis rutinas."""
     rutinas = Rutina.query.filter_by(id_usuario=request.usuario_actual_id).all()
     return jsonify([r.a_dict(incluir_ejercicios=True) for r in rutinas])
 
@@ -18,7 +17,6 @@ def listar_rutinas():
 @bp.route("", methods=["POST"])
 @requerir_autenticacion
 def crear_rutina():
-    """Crear rutina."""
     datos = request.get_json()
     if not datos or not datos.get("nombre_rutina"):
         return jsonify({"error": "nombre_rutina requerido"}), 400
@@ -38,7 +36,6 @@ def crear_rutina():
 @bp.route("/<int:id_rutina>", methods=["GET"])
 @requerir_autenticacion
 def obtener_rutina(id_rutina):
-    """Ver una rutina."""
     rutina = Rutina.query.filter_by(id_rutina=id_rutina, id_usuario=request.usuario_actual_id).first()
     if not rutina:
         return jsonify({"error": "Rutina no encontrada"}), 404
@@ -48,7 +45,6 @@ def obtener_rutina(id_rutina):
 @bp.route("/<int:id_rutina>", methods=["PUT"])
 @requerir_autenticacion
 def modificar_rutina(id_rutina):
-    """Modificar rutina."""
     rutina = Rutina.query.filter_by(id_rutina=id_rutina, id_usuario=request.usuario_actual_id).first()
     if not rutina:
         return jsonify({"error": "Rutina no encontrada"}), 404
@@ -73,7 +69,6 @@ def modificar_rutina(id_rutina):
 @bp.route("/<int:id_rutina>", methods=["DELETE"])
 @requerir_autenticacion
 def borrar_rutina(id_rutina):
-    """Borrar rutina."""
     rutina = Rutina.query.filter_by(id_rutina=id_rutina, id_usuario=request.usuario_actual_id).first()
     if not rutina:
         return jsonify({"error": "Rutina no encontrada"}), 404
@@ -86,7 +81,6 @@ def borrar_rutina(id_rutina):
 @bp.route("/<int:id_rutina>/ejercicios", methods=["POST"])
 @requerir_autenticacion
 def añadir_ejercicio(id_rutina):
-    """Añadir ejercicio a rutina."""
     rutina = Rutina.query.filter_by(id_rutina=id_rutina, id_usuario=request.usuario_actual_id).first()
     if not rutina:
         return jsonify({"error": "Rutina no encontrada"}), 404
@@ -117,7 +111,6 @@ def añadir_ejercicio(id_rutina):
 @bp.route("/<int:id_rutina>/ejercicios/<int:id_ejercicio>", methods=["DELETE"])
 @requerir_autenticacion
 def quitar_ejercicio(id_rutina, id_ejercicio):
-    """Quitar ejercicio de rutina."""
     rutina = Rutina.query.filter_by(id_rutina=id_rutina, id_usuario=request.usuario_actual_id).first()
     if not rutina:
         return jsonify({"error": "Rutina no encontrada"}), 404

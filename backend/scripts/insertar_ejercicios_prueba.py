@@ -1,7 +1,3 @@
-"""
-Script para insertar ejercicios de prueba en la BD.
-Ejecutar desde backend: python scripts/insertar_ejercicios_prueba.py
-"""
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

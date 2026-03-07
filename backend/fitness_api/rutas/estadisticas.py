@@ -12,20 +12,16 @@ bp = Blueprint("estadisticas", __name__, url_prefix="/estadisticas")
 @bp.route("/progreso", methods=["GET"])
 @requerir_autenticacion
 def obtener_progreso():
-    """Ver mi progreso: volumen, días entrenados, etc."""
     usuario_id = request.usuario_actual_id
 
-    # Días entrenados (total)
     total_entrenamientos = Entrenamiento.query.filter_by(id_usuario=usuario_id).count()
 
-    # Últimos 30 días
     hace_30 = datetime.utcnow().date() - timedelta(days=30)
     entrenamientos_ultimo_mes = Entrenamiento.query.filter(
         Entrenamiento.id_usuario == usuario_id,
         Entrenamiento.fecha >= hace_30
     ).count()
 
-    # Volumen total aproximado (repeticiones * peso por registro)
     volumen = db.session.query(
         func.sum(RegistroEjercicio.repeticiones_realizadas * func.coalesce(RegistroEjercicio.peso_usado, 1))
     ).join(Entrenamiento).filter(Entrenamiento.id_usuario == usuario_id).scalar() or 0
@@ -40,7 +36,6 @@ def obtener_progreso():
 @bp.route("/graficas", methods=["GET"])
 @requerir_autenticacion
 def obtener_datos_graficas():
-    """Datos para gráficas: peso y entrenamientos por fecha."""
     usuario_id = request.usuario_actual_id
 
     peso_registros = SeguimientoPeso.query.filter_by(id_usuario=usuario_id).order_by(

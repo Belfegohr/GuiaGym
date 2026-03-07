@@ -12,11 +12,6 @@ _firebase_app = None
 
 
 def _obtener_firebase():
-    """Inicializa Firebase Admin SDK una sola vez.
-    Soporta FIREBASE_ADMINSDK_JSON como:
-    - Ruta a archivo .json
-    - JSON string (para Secret Manager en Cloud Run)
-    """
     global _firebase_app
     if _firebase_app is None:
         import json
@@ -38,7 +33,6 @@ def _obtener_firebase():
 
 @bp.route("/registro", methods=["POST"])
 def registro():
-    """Registrar nuevo usuario."""
     datos = request.get_json()
     if not datos:
         return jsonify({"error": "Datos requeridos"}), 400
@@ -84,7 +78,6 @@ def registro():
 
 @bp.route("/login", methods=["POST"])
 def login():
-    """Iniciar sesión. Devuelve token JWT."""
     datos = request.get_json()
     if not datos:
         return jsonify({"error": "Datos requeridos"}), 400
@@ -108,7 +101,6 @@ def login():
 
 @bp.route("/google", methods=["POST"])
 def login_google():
-    """Iniciar sesión con Google. Recibe id_token de Firebase Auth y devuelve JWT de la app."""
     datos = request.get_json()
     if not datos:
         return jsonify({"error": "Datos requeridos"}), 400
@@ -151,7 +143,6 @@ def login_google():
 
 @bp.route("/renovar", methods=["POST"])
 def renovar():
-    """Renovar token. Necesita enviar el token actual en Authorization."""
     from fitness_api.utilidades.seguridad import decodificar_token
 
     auth_header = request.headers.get("Authorization")

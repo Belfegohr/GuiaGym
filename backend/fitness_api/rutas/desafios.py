@@ -13,7 +13,6 @@ bp = Blueprint("desafios", __name__, url_prefix="/desafios")
 @bp.route("", methods=["GET"])
 @requerir_autenticacion
 def listar_desafios():
-    """Ver desafíos activos."""
     hoy = datetime.utcnow().date()
     desafios = Desafio.query.filter(
         Desafio.fecha_inicio <= hoy,
@@ -25,7 +24,6 @@ def listar_desafios():
 @bp.route("/<int:id_desafio>/unirse", methods=["POST"])
 @requerir_autenticacion
 def unirse_desafio(id_desafio):
-    """Unirse a un desafío."""
     desafio = Desafio.query.get(id_desafio)
     if not desafio:
         return jsonify({"error": "Desafío no encontrado"}), 404
@@ -50,7 +48,6 @@ def unirse_desafio(id_desafio):
 @bp.route("/<int:id_desafio>/mi_progreso", methods=["GET"])
 @requerir_autenticacion
 def mi_progreso(id_desafio):
-    """Ver mi progreso en el desafío."""
     desafio = Desafio.query.get(id_desafio)
     if not desafio:
         return jsonify({"error": "Desafío no encontrado"}), 404
@@ -62,7 +59,6 @@ def mi_progreso(id_desafio):
     if not ud:
         return jsonify({"error": "No estás en este desafío"}), 404
 
-    # Calcular progreso real según tipo de desafío
     if desafio.tipo_objetivo == "entrenamientos":
         progreso = Entrenamiento.query.filter(
             Entrenamiento.id_usuario == request.usuario_actual_id,
@@ -70,7 +66,6 @@ def mi_progreso(id_desafio):
             Entrenamiento.fecha <= desafio.fecha_fin
         ).count()
     else:
-        # volumen
         vol = db.session.query(
             func.sum(RegistroEjercicio.repeticiones_realizadas * func.coalesce(RegistroEjercicio.peso_usado, 1))
         ).join(Entrenamiento).filter(

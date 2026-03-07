@@ -13,7 +13,6 @@ bp = Blueprint("social", __name__, url_prefix="/social")
 @bp.route("/seguir/<int:id_usuario>", methods=["POST"])
 @requerir_autenticacion
 def seguir_usuario(id_usuario):
-    """Seguir a un usuario."""
     if id_usuario == request.usuario_actual_id:
         return jsonify({"error": "No puedes seguirte a ti mismo"}), 400
 
@@ -39,7 +38,6 @@ def seguir_usuario(id_usuario):
 @bp.route("/dejar_de_seguir/<int:id_usuario>", methods=["DELETE"])
 @requerir_autenticacion
 def dejar_de_seguir(id_usuario):
-    """Dejar de seguir."""
     seg = Seguidor.query.filter_by(
         id_usuario_seguidor=request.usuario_actual_id,
         id_usuario_seguido=id_usuario
@@ -55,7 +53,6 @@ def dejar_de_seguir(id_usuario):
 @bp.route("/siguiendo", methods=["GET"])
 @requerir_autenticacion
 def listar_siguiendo():
-    """Ver a quién sigo y su actividad reciente."""
     siguiendo = Seguidor.query.filter_by(id_usuario_seguidor=request.usuario_actual_id).all()
     ids_seguidos = [s.id_usuario_seguido for s in siguiendo]
 
@@ -82,8 +79,7 @@ def listar_siguiendo():
 @bp.route("/clasificacion", methods=["GET"])
 @requerir_autenticacion
 def obtener_clasificacion():
-    """Rankings: por días entrenados y por volumen."""
-    tipo = request.args.get("tipo", "dias")  # "dias" o "volumen"
+    tipo = request.args.get("tipo", "dias")
 
     if tipo == "dias":
         ranking = db.session.query(
@@ -99,7 +95,6 @@ def obtener_clasificacion():
             for i, r in enumerate(ranking)
         ])
 
-    # Por volumen (simplificado: suma de repeticiones * peso)
     from fitness_api.modelos.entrenamiento import RegistroEjercicio
     volumen_q = db.session.query(
         Usuario.id_usuario,

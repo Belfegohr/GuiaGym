@@ -17,7 +17,6 @@ class Rutina(db.Model):
     ejercicios = db.relationship("RutinaEjercicio", back_populates="rutina", cascade="all, delete-orphan")
 
     def a_dict(self, incluir_ejercicios=False):
-        """Convierte la rutina a diccionario para JSON."""
         d = {
             "id_rutina": self.id_rutina,
             "id_usuario": self.id_usuario,

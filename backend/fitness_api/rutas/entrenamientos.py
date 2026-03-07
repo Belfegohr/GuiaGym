@@ -11,7 +11,6 @@ bp = Blueprint("entrenamientos", __name__, url_prefix="/entrenamientos")
 @bp.route("", methods=["GET"])
 @requerir_autenticacion
 def listar_entrenamientos():
-    """Listar mis entrenamientos."""
     entrenamientos = Entrenamiento.query.filter_by(id_usuario=request.usuario_actual_id).order_by(
         Entrenamiento.fecha.desc()
     ).all()
@@ -21,7 +20,6 @@ def listar_entrenamientos():
 @bp.route("", methods=["POST"])
 @requerir_autenticacion
 def registrar_entrenamiento():
-    """Registrar entrenamiento."""
     datos = request.get_json()
     if not datos or "fecha" not in datos:
         return jsonify({"error": "fecha requerida"}), 400
@@ -47,7 +45,6 @@ def registrar_entrenamiento():
 @bp.route("/<int:id_entrenamiento>", methods=["GET"])
 @requerir_autenticacion
 def obtener_entrenamiento(id_entrenamiento):
-    """Ver detalle de entrenamiento."""
     e = Entrenamiento.query.filter_by(
         id_entrenamiento=id_entrenamiento,
         id_usuario=request.usuario_actual_id
@@ -60,7 +57,6 @@ def obtener_entrenamiento(id_entrenamiento):
 @bp.route("/<int:id_entrenamiento>/registros", methods=["POST"])
 @requerir_autenticacion
 def registrar_serie(id_entrenamiento):
-    """Registrar series y repeticiones de un ejercicio."""
     entrenamiento = Entrenamiento.query.filter_by(
         id_entrenamiento=id_entrenamiento,
         id_usuario=request.usuario_actual_id

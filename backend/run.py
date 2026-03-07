@@ -1,4 +1,3 @@
-"""Lanzador de la API. Ejecutar: python run.py"""
 import subprocess
 import sys
 import os

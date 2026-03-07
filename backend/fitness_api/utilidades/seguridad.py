@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 
 
 def generar_token(usuario_id, secret_key, horas=24):
-    """Genera un token JWT para el usuario."""
     payload = {
         "usuario_id": usuario_id,
         "exp": datetime.utcnow() + timedelta(hours=horas)
@@ -15,7 +14,6 @@ def generar_token(usuario_id, secret_key, horas=24):
 
 
 def decodificar_token(token, secret_key):
-    """Decodifica el token y devuelve el usuario_id. None si es invalido."""
     try:
         payload = jwt.decode(token, secret_key, algorithms=["HS256"])
         return payload.get("usuario_id")
@@ -26,7 +24,6 @@ def decodificar_token(token, secret_key):
 
 
 def requerir_autenticacion(f):
-    """Decorador para rutas que requieren estar logueado."""
     @wraps(f)
     def decorador(*args, **kwargs):
         auth_header = request.headers.get("Authorization")

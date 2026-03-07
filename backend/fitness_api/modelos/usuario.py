@@ -18,15 +18,12 @@ class Usuario(db.Model):
     fecha_registro = db.Column(db.DateTime, default=datetime.utcnow)
 
     def establecer_contraseña(self, texto_plano):
-        """Cifra y guarda la contraseña."""
         self.contraseña = bcrypt.generate_password_hash(texto_plano).decode("utf-8")
 
     def verificar_contraseña(self, texto_plano):
-        """Comprueba si la contraseña coincide."""
         return bcrypt.check_password_hash(self.contraseña, texto_plano)
 
     def a_dict(self, incluir_email=True):
-        """Convierte el usuario a diccionario para JSON."""
         d = {
             "id_usuario": self.id_usuario,
             "nombre": self.nombre,

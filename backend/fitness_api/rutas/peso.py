@@ -10,7 +10,6 @@ bp = Blueprint("peso", __name__, url_prefix="/peso")
 @bp.route("", methods=["GET"])
 @requerir_autenticacion
 def obtener_historial():
-    """Historial de mi peso."""
     registros = SeguimientoPeso.query.filter_by(id_usuario=request.usuario_actual_id).order_by(
         SeguimientoPeso.fecha.desc()
     ).all()
@@ -20,7 +19,6 @@ def obtener_historial():
 @bp.route("", methods=["POST"])
 @requerir_autenticacion
 def registrar_peso():
-    """Registrar peso nuevo."""
     datos = request.get_json()
     if not datos or "fecha" not in datos or "peso_kg" not in datos:
         return jsonify({"error": "fecha y peso_kg requeridos"}), 400

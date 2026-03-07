@@ -1,7 +1,6 @@
 import os
 
 class Configuracion:
-    """Variables de configuracion de la API."""
     SECRET_KEY = os.environ.get("SECRET_KEY", "clave_secreta_cambiar_en_produccion")
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         "DATABASE_URL",

@@ -8,8 +8,8 @@ class Desafio(db.Model):
     id_desafio = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(150), nullable=False)
     descripcion = db.Column(db.Text, nullable=True)
-    objetivo = db.Column(db.Integer, nullable=True)  # numero a alcanzar (ej: 3 entrenamientos)
-    tipo_objetivo = db.Column(db.String(50), nullable=True)  # "entrenamientos", "volumen"
+    objetivo = db.Column(db.Integer, nullable=True)
+    tipo_objetivo = db.Column(db.String(50), nullable=True)
     fecha_inicio = db.Column(db.Date, nullable=False)
     fecha_fin = db.Column(db.Date, nullable=False)
 

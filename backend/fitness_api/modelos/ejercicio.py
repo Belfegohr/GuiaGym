@@ -13,7 +13,6 @@ class Ejercicio(db.Model):
     url_video = db.Column(db.String(500), nullable=True)
 
     def a_dict(self):
-        """Convierte el ejercicio a diccionario para JSON."""
         return {
             "id_ejercicio": self.id_ejercicio,
             "nombre": self.nombre,

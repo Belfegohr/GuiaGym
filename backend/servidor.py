@@ -1,4 +1,3 @@
-"""Punto de entrada para ejecutar la API. Usar: python servidor.py"""
 import os
 import sys
 
