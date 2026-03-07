@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "99662358474",
-    "project_id": "guiagym-c3e88",
-    "storage_bucket": "guiagym-c3e88.firebasestorage.app"
+    "project_number": "TU_PROJECT_NUMBER",
+    "project_id": "tu-project-id",
+    "storage_bucket": "tu-project-id.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:99662358474:android:36251486d301f43f9a9133",
+        "mobilesdk_app_id": "1:TU_PROJECT_NUMBER:android:XXXXXXXX",
         "android_client_info": {
           "package_name": "com.guiagym"
         }
       },
       "oauth_client": [
         {
-          "client_id": "99662358474-2jok29ln680r1gtjooai84omp5bvuil5.apps.googleusercontent.com",
+          "client_id": "TU_PROJECT_NUMBER-xxxxxxxxxxxx.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBq1sSwLdEoFE29k1T5nndyR6lddYWrQ_Y"
+          "current_key": "TU_API_KEY_FIREBASE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "99662358474-2jok29ln680r1gtjooai84omp5bvuil5.apps.googleusercontent.com",
+              "client_id": "TU_PROJECT_NUMBER-xxxxxxxxxxxx.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

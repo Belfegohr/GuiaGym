@@ -19,6 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.guiagym.R
 import com.guiagym.ui.viewmodel.AuthViewModel
 
 @Composable
@@ -123,8 +124,9 @@ fun LoginPantalla(
 
         OutlinedButton(
             onClick = {
+                val webClientId = context.getString(R.string.default_web_client_id)
                 val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken("99662358474-2jok29ln680r1gtjooai84omp5bvuil5.apps.googleusercontent.com")
+                    .requestIdToken(webClientId)
                     .requestEmail()
                     .build()
                 val client = GoogleSignIn.getClient(context, gso)

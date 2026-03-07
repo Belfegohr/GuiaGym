@@ -8,6 +8,17 @@ App Android en Kotlin (Jetpack Compose) que consume la API del backend.
 - JDK 17
 - API del backend ejecutándose
 
+## Configuración Firebase (Google Sign-In)
+
+El archivo `google-services.json` no se incluye por seguridad. Para poder usar "Continuar con Google":
+
+1. Entra en [Firebase Console](https://console.firebase.google.com) → tu proyecto
+2. Ve a **Configuración del proyecto** (engranaje) → **Tus apps**
+3. Descarga `google-services.json` para la app Android
+4. Cópialo en `android/app/google-services.json`
+
+(Usa `google-services.json.example` como referencia de la estructura)
+
 ## Ejecutar
 
 1. Asegúrate de que la API esté corriendo:

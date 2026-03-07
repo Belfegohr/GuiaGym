@@ -1,5 +1,6 @@
 # --- Archivos sensibles (NUNCA subir) ---
 **/firebase-adminsdk*.json
+**/google-services.json
 **/.env
 **/.env.*
 **/local.properties
