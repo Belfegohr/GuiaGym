@@ -7,7 +7,6 @@ venv
 .env
 .env.*
 *.db
-firebase-adminsdk*.json
 README.md
 scripts/
 .pytest_cache

@@ -1,5 +1,3 @@
-import os
-import secrets
 from flask import Blueprint, request, jsonify, current_app
 from datetime import datetime
 from fitness_api.extensiones import db, bcrypt
@@ -7,28 +5,6 @@ from fitness_api.modelos.usuario import Usuario
 from fitness_api.utilidades.seguridad import generar_token
 
 bp = Blueprint("autenticacion", __name__, url_prefix="/auth")
-
-_firebase_app = None
-
-
-def _obtener_firebase():
-    global _firebase_app
-    if _firebase_app is None:
-        import json
-        import firebase_admin
-        from firebase_admin import credentials
-        valor = os.environ.get(
-            "FIREBASE_ADMINSDK_JSON",
-            os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "firebase-adminsdk.json")
-        )
-        if valor.strip().startswith("{"):
-            cred = credentials.Certificate(json.loads(valor))
-        elif os.path.exists(valor):
-            cred = credentials.Certificate(valor)
-        else:
-            raise RuntimeError("FIREBASE_ADMINSDK_JSON no configurado: ruta inexistente o JSON inválido")
-        _firebase_app = firebase_admin.initialize_app(cred)
-    return _firebase_app
 
 
 @bp.route("/registro", methods=["POST"])
@@ -91,48 +67,6 @@ def login():
     usuario = Usuario.query.filter_by(email=email).first()
     if not usuario or not usuario.verificar_contraseña(contraseña):
         return jsonify({"error": "Email o contraseña incorrectos"}), 401
-
-    token = generar_token(usuario.id_usuario, current_app.config["JWT_SECRET_KEY"])
-    return jsonify({
-        "token": token,
-        "usuario": usuario.a_dict()
-    })
-
-
-@bp.route("/google", methods=["POST"])
-def login_google():
-    datos = request.get_json()
-    if not datos:
-        return jsonify({"error": "Datos requeridos"}), 400
-
-    id_token = datos.get("id_token")
-    if not id_token:
-        return jsonify({"error": "id_token requerido"}), 400
-
-    try:
-        _obtener_firebase()
-        from firebase_admin import auth
-        decoded = auth.verify_id_token(id_token)
-    except Exception as e:
-        return jsonify({"error": "Token de Google inválido", "detalle": str(e)}), 401
-
-    email = decoded.get("email")
-    nombre = decoded.get("name") or decoded.get("email", "").split("@")[0]
-
-    if not email:
-        return jsonify({"error": "El token no contiene email"}), 400
-
-    usuario = Usuario.query.filter_by(email=email).first()
-    if not usuario:
-        usuario = Usuario(
-            nombre=nombre,
-            email=email,
-            objetivo=None,
-            nivel_experiencia=None,
-        )
-        usuario.contraseña = bcrypt.generate_password_hash(secrets.token_urlsafe(32)).decode("utf-8")
-        db.session.add(usuario)
-        db.session.commit()
 
     token = generar_token(usuario.id_usuario, current_app.config["JWT_SECRET_KEY"])
     return jsonify({

@@ -1,6 +1,6 @@
-# API Fitness App - Backend
+# API GuiaGym
 
-API REST en Python (Flask) para la app de rutinas de ejercicios. Tecnologías: Python, MySQL, SQLAlchemy, JWT, bcrypt.
+API REST en Python (Flask) para la app de rutinas de ejercicios. Sin Firebase ni servicios cloud. Tecnologías: Python, Flask, SQLAlchemy, JWT, bcrypt.
 
 ## Requisitos
 
