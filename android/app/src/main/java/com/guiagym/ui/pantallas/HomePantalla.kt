@@ -14,18 +14,21 @@ import com.guiagym.ui.viewmodel.AuthViewModel
 fun HomePantalla(
     authViewModel: AuthViewModel,
     onIrAEjercicios: () -> Unit,
-    onCerrarSesion: () -> Unit
+    mostrarCerrarSesion: Boolean = true,
+    onCerrarSesion: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("GuiaGym", fontWeight = FontWeight.Bold) },
                 actions = {
-                    TextButton(onClick = {
-                        authViewModel.cerrarSesion()
-                        onCerrarSesion()
-                    }) {
-                        Text("Cerrar sesión")
+                    if (mostrarCerrarSesion) {
+                        TextButton(onClick = {
+                            authViewModel.cerrarSesion()
+                            onCerrarSesion()
+                        }) {
+                            Text("Cerrar sesión")
+                        }
                     }
                 }
             )

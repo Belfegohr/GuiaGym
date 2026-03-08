@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             FitnessAppTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    val authViewModel: com.fitnessapp.ui.viewmodel.AuthViewModel = viewModel()
+                    val authViewModel: com.guiagym.ui.viewmodel.AuthViewModel = viewModel()
                     val gestorToken = GestorToken(applicationContext)
                     NavegacionApp(
                         authViewModel = authViewModel,
