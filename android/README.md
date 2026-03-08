@@ -1,27 +1,23 @@
-# Fitness App - Android
+# GuiaGym - Android
 
-App Android en Kotlin (Jetpack Compose) que consume la API del backend.
+App Android en Kotlin (Jetpack Compose). Sin Firebase. Abre directamente la pantalla principal.
+
+## Abrir en Android Studio (para móvil)
+
+1. Clona o descarga el repositorio
+2. En Android Studio: **File → Open** → selecciona la carpeta del proyecto (la que contiene `build.gradle.kts`, `app/`, `settings.gradle.kts`)
+3. Espera a que Gradle sincronice
+4. Conecta tu móvil (depuración USB) o usa un emulador
+5. Pulsa **Run** (▶)
 
 ## Requisitos
 
 - Android Studio Ladybug (2024.2) o Hedgehog (2023.1.1) o superior
 - JDK 17
-- API del backend ejecutándose
 
-## Configuración Firebase (Google Sign-In)
+## Ejecutar (con API)
 
-El archivo `google-services.json` no se incluye por seguridad. Para poder usar "Continuar con Google":
-
-1. Entra en [Firebase Console](https://console.firebase.google.com) → tu proyecto
-2. Ve a **Configuración del proyecto** (engranaje) → **Tus apps**
-3. Descarga `google-services.json` para la app Android
-4. Cópialo en `android/app/google-services.json`
-
-(Usa `google-services.json.example` como referencia de la estructura)
-
-## Ejecutar
-
-1. Asegúrate de que la API esté corriendo:
+1. Asegúrate de que la API esté corriendo (opcional):
    ```
    cd d:\TFG\backend
    python servidor.py
