@@ -2,6 +2,10 @@ from functools import wraps
 from flask import request, jsonify
 import jwt
 from datetime import datetime, timedelta
+from fitness_api.modelos.usuario import Usuario
+from fitness_api.extensiones import db
+from fitness_api.utilidades.firebase_admin_client import verificar_id_token
+from fitness_api.utilidades.firestore_repo import crear_o_actualizar_usuario
 
 
 def generar_token(usuario_id, secret_key, horas=24):
@@ -30,10 +34,38 @@ def requerir_autenticacion(f):
         if not auth_header or not auth_header.startswith("Bearer "):
             return jsonify({"error": "Token requerido"}), 401
         token = auth_header.split(" ")[1]
-        from flask import current_app
-        usuario_id = decodificar_token(token, current_app.config["JWT_SECRET_KEY"])
-        if not usuario_id:
-            return jsonify({"error": "Token invalido o expirado"}), 401
-        request.usuario_actual_id = usuario_id
+        try:
+            decoded = verificar_id_token(token)
+        except Exception:
+            return jsonify({"error": "Token de Firebase invalido o expirado"}), 401
+
+        email = decoded.get("email")
+        uid = decoded.get("uid")
+        if not email:
+            return jsonify({"error": "El token no contiene email"}), 401
+
+        usuario = Usuario.query.filter_by(email=email).first()
+        if not usuario:
+            usuario = Usuario(
+                nombre=(decoded.get("name") or email.split("@")[0])[:100],
+                email=email,
+                objetivo=None,
+                nivel_experiencia=None,
+            )
+            # Contraseña no se usa cuando la autenticacion la hace Firebase.
+            usuario.establecer_contraseña(uid or "firebase_user")
+            db.session.add(usuario)
+            db.session.commit()
+
+        request.usuario_actual_id = usuario.id_usuario
+        request.firebase_uid = uid
+        request.firebase_email = email
+        crear_o_actualizar_usuario(
+            uid=uid,
+            datos={
+                "nombre": decoded.get("name") or usuario.nombre or email.split("@")[0],
+                "email": email,
+            },
+        )
         return f(*args, **kwargs)
     return decorador

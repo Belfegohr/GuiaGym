@@ -1,0 +1,13 @@
+services:
+  api:
+    build: .
+    container_name: guiagym-api
+    ports:
+      - "5000:8080"
+    env_file:
+      - .env
+    environment:
+      - PORT=8080
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

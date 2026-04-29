@@ -1,6 +1,53 @@
 # API GuiaGym
 
-API REST en Python (Flask) para la app de rutinas de ejercicios. Sin Firebase ni servicios cloud. Tecnologías: Python, Flask, SQLAlchemy, JWT, bcrypt.
+API REST en Python (Flask) para la app de rutinas de ejercicios. Integrada con Firebase Auth y migracion progresiva a Firestore. Tecnologías: Python, Flask, SQLAlchemy, Firebase Admin, bcrypt.
+
+## Estado actual de autenticacion
+
+- La API valida `id_token` de Firebase en `Authorization: Bearer <token>`.
+- Endpoints `POST /auth/login` y `POST /auth/registro` requieren `id_token`.
+- `POST /auth/renovar` no aplica: la renovacion se hace con el SDK de Firebase en cliente.
+- Para ejecutar, define `FIREBASE_ADMINSDK_JSON` (ruta al JSON o el JSON completo en variable).
+
+## Ejecutar con Docker (recomendado)
+
+1. Entra en la carpeta del backend:
+
+```bash
+cd backend
+```
+
+2. Crea el archivo de variables:
+
+```bash
+cp env.example .env
+```
+
+En Windows PowerShell:
+
+```powershell
+copy env.example .env
+```
+
+3. Levanta la API:
+
+```bash
+docker compose up -d --build
+```
+
+4. Comprueba que está activa:
+
+```bash
+docker compose ps
+```
+
+La API quedará en `http://localhost:5000`.
+
+Para pararla:
+
+```bash
+docker compose down
+```
 
 ## Requisitos
 

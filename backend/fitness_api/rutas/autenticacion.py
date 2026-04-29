@@ -1,8 +1,8 @@
-from flask import Blueprint, request, jsonify, current_app
-from datetime import datetime
+from flask import Blueprint, request, jsonify
 from fitness_api.extensiones import db, bcrypt
 from fitness_api.modelos.usuario import Usuario
-from fitness_api.utilidades.seguridad import generar_token
+from fitness_api.utilidades.firebase_admin_client import verificar_id_token
+from fitness_api.utilidades.firestore_repo import crear_o_actualizar_usuario
 
 bp = Blueprint("autenticacion", __name__, url_prefix="/auth")
 
@@ -13,42 +13,57 @@ def registro():
     if not datos:
         return jsonify({"error": "Datos requeridos"}), 400
 
-    email = datos.get("email")
-    contraseña = datos.get("contraseña")
-    nombre = datos.get("nombre")
+    id_token = datos.get("id_token")
+    if not id_token:
+        return jsonify({"error": "id_token de Firebase requerido"}), 400
 
-    if not email or not contraseña or not nombre:
-        return jsonify({"error": "Faltan email, contraseña o nombre"}), 400
+    try:
+        decoded = verificar_id_token(id_token)
+    except Exception as e:
+        return jsonify({"error": "Token de Firebase invalido", "detalle": str(e)}), 401
 
-    if Usuario.query.filter_by(email=email).first():
-        return jsonify({"error": "El email ya está registrado"}), 400
+    email = decoded.get("email")
+    uid = decoded.get("uid")
+    nombre = datos.get("nombre") or decoded.get("name") or (email.split("@")[0] if email else None)
 
-    fecha_nac = None
-    if datos.get("fecha_nacimiento"):
-        try:
-            fecha_nac = datetime.strptime(datos["fecha_nacimiento"], "%Y-%m-%d").date()
-        except (ValueError, TypeError):
-            pass
+    if not email or not uid:
+        return jsonify({"error": "El token de Firebase debe contener uid y email"}), 400
 
     usuario = Usuario(
-        nombre=nombre,
+        nombre=(nombre or "usuario")[:100],
         email=email,
-        fecha_nacimiento=fecha_nac,
+        fecha_nacimiento=None,
         genero=datos.get("genero"),
         altura=float(datos["altura"]) if datos.get("altura") else None,
         peso_actual=float(datos["peso_actual"]) if datos.get("peso_actual") else None,
         objetivo=datos.get("objetivo"),
         nivel_experiencia=datos.get("nivel_experiencia"),
     )
-    usuario.establecer_contraseña(contraseña)
-    db.session.add(usuario)
-    db.session.commit()
+    existente = Usuario.query.filter_by(email=email).first()
+    if existente:
+        usuario = existente
+    else:
+        usuario.establecer_contraseña(uid)
+        db.session.add(usuario)
+        db.session.commit()
 
-    token = generar_token(usuario.id_usuario, current_app.config["JWT_SECRET_KEY"])
+    usuario_firestore = crear_o_actualizar_usuario(
+        uid=uid,
+        datos={
+            "nombre": usuario.nombre,
+            "email": usuario.email,
+            "genero": usuario.genero,
+            "altura": usuario.altura,
+            "peso_actual": usuario.peso_actual,
+            "objetivo": usuario.objetivo,
+            "nivel_experiencia": usuario.nivel_experiencia,
+        },
+    )
+
     return jsonify({
-        "mensaje": "Usuario creado",
-        "token": token,
-        "usuario": usuario.a_dict()
+        "mensaje": "Usuario sincronizado con Firebase",
+        "token": id_token,
+        "usuario": usuario_firestore
     }), 201
 
 
@@ -58,35 +73,54 @@ def login():
     if not datos:
         return jsonify({"error": "Datos requeridos"}), 400
 
-    email = datos.get("email")
-    contraseña = datos.get("contraseña")
+    id_token = datos.get("id_token")
+    if not id_token:
+        return jsonify({"error": "id_token de Firebase requerido"}), 400
 
-    if not email or not contraseña:
-        return jsonify({"error": "Email y contraseña requeridos"}), 400
+    try:
+        decoded = verificar_id_token(id_token)
+    except Exception as e:
+        return jsonify({"error": "Token de Firebase invalido", "detalle": str(e)}), 401
+
+    email = decoded.get("email")
+    uid = decoded.get("uid")
+    if not email or not uid:
+        return jsonify({"error": "El token de Firebase debe contener uid y email"}), 400
 
     usuario = Usuario.query.filter_by(email=email).first()
-    if not usuario or not usuario.verificar_contraseña(contraseña):
-        return jsonify({"error": "Email o contraseña incorrectos"}), 401
+    if not usuario:
+        usuario = Usuario(
+            nombre=(decoded.get("name") or email.split("@")[0])[:100],
+            email=email,
+            objetivo=None,
+            nivel_experiencia=None,
+        )
+        usuario.contraseña = bcrypt.generate_password_hash(decoded.get("uid", "firebase_user")).decode("utf-8")
+        db.session.add(usuario)
+        db.session.commit()
 
-    token = generar_token(usuario.id_usuario, current_app.config["JWT_SECRET_KEY"])
+    usuario_firestore = crear_o_actualizar_usuario(
+        uid=uid,
+        datos={
+            "nombre": usuario.nombre,
+            "email": usuario.email,
+            "genero": usuario.genero,
+            "altura": usuario.altura,
+            "peso_actual": usuario.peso_actual,
+            "objetivo": usuario.objetivo,
+            "nivel_experiencia": usuario.nivel_experiencia,
+        },
+    )
+
     return jsonify({
-        "token": token,
-        "usuario": usuario.a_dict()
+        "token": id_token,
+        "proveedor": "firebase",
+        "usuario": usuario_firestore
     })
 
 
 @bp.route("/renovar", methods=["POST"])
 def renovar():
-    from fitness_api.utilidades.seguridad import decodificar_token
-
-    auth_header = request.headers.get("Authorization")
-    if not auth_header or not auth_header.startswith("Bearer "):
-        return jsonify({"error": "Token requerido"}), 401
-
-    token_viejo = auth_header.split(" ")[1]
-    usuario_id = decodificar_token(token_viejo, current_app.config["JWT_SECRET_KEY"])
-    if not usuario_id:
-        return jsonify({"error": "Token invalido o expirado"}), 401
-
-    token_nuevo = generar_token(usuario_id, request.application.config["JWT_SECRET_KEY"])
-    return jsonify({"token": token_nuevo})
+    return jsonify({
+        "mensaje": "Con Firebase, la renovacion de token se hace en el cliente (SDK Firebase)."
+    }), 400
